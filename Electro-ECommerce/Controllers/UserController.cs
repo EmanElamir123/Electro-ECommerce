@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Electro_ECommerce.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Electro_ECommerce.Controllers
@@ -6,9 +7,17 @@ namespace Electro_ECommerce.Controllers
     public class UserController : Controller
     {
         // GET: UserController
+        private readonly TechXpressDbContext _context;
+
+        public UserController(TechXpressDbContext context)
+        {
+            _context = context;
+        }
+        // GET: CategoriesController
         public ActionResult Index()
         {
-            return View();
+            var categories = _context.Categories.ToList();
+            return View(categories);
         }
 
         // GET: UserController/Details/5
