@@ -1,83 +1,106 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Electro_ECommerce.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Electro_ECommerce.Controllers
 {
     public class ProductController : Controller
     {
-        // GET: ProductController
+
+        //TechXpressDbContext db = new TechXpressDbContext();
+        //var categ = db.Categories.ToList();
+        private readonly TechXpressDbContext _context;
+
+        public ProductController(TechXpressDbContext context)
+        {
+            _context = context;
+        }
+        // GET: CategoriesController
         public ActionResult Index()
         {
-            return View();
+            var Products = _context.Products.ToList();
+            return View(Products);
         }
 
-        // GET: ProductController/Details/5
+        // GET: CategoriesController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            var Products = _context.Products.Find(id);
+            if (Products == null)
+                return NotFound();
+
+            return View(Products);
         }
 
-        // GET: ProductController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: ProductController/Create
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Product Product)
         {
-            try
+
+            if (ModelState.IsValid)
             {
+                _context.Products.Add(Product);
+                _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
+            return View(Product);
         }
 
-        // GET: ProductController/Edit/5
+        // GET: CategoriesController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            var Product = _context.Products.Find(id);
+            if (Product == null)
+                return NotFound();
+
+            return View(Product);
         }
 
-        // POST: ProductController/Edit/5
+        // POST: CategoriesController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, Product Product)
         {
-            try
+
+            if ((id != Product.ProductId)) return BadRequest();
+            if (ModelState.IsValid)
             {
+                _context.Products.Update(Product);
+                _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
+            return View(Product);
         }
 
-        // GET: ProductController/Delete/5
+        // GET: CategoriesController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var Product = _context.Products.Find(id);
+            if (Product == null)
+                return NotFound();
+
+            return View(Product);
+
         }
 
-        // POST: ProductController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        // POST: CategoriesController/Delete/5
+        [HttpPost, ActionName("delete")]
+
+        public ActionResult DeleteConfirmed(int id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var Product = _context.Products.Find(id);
+            if (Product == null) return NotFound();
+            _context.Products.Remove(Product);
+            _context.SaveChanges();
+            return RedirectToAction(nameof(Index));
+
         }
     }
 }
+

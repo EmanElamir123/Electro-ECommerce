@@ -10,10 +10,11 @@ namespace Electro_ECommerce.Controllers
         //TechXpressDbContext db = new TechXpressDbContext();
         //var categ = db.Categories.ToList();
         private readonly TechXpressDbContext _context;
-
-        public CategoriesController(TechXpressDbContext context)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public CategoriesController(TechXpressDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
         // GET: CategoriesController
         public ActionResult Index()
@@ -41,20 +42,35 @@ namespace Electro_ECommerce.Controllers
         // POST: CategoriesController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Category category)
+        public async Task<IActionResult> Create(Category category, IFormFile ImageFile)
         {
-            
             if (ModelState.IsValid)
             {
-                _context.Categories.Add(category);
-                _context.SaveChanges();
+                if (ImageFile != null && ImageFile.Length > 0)
+                {
+                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "img");
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + ImageFile.FileName;
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await ImageFile.CopyToAsync(fileStream);
+                    }
+
+                    
+                    category.ImageUrl = "/img/" + uniqueFileName;
+                }
+
+                _context.Add(category);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(category);
         }
+    
 
-        // GET: CategoriesController/Edit/5
-        public ActionResult Edit(int id)
+    // GET: CategoriesController/Edit/5
+    public ActionResult Edit(int id)
         {
             var category = _context.Categories.Find(id);
             if (category == null)
@@ -92,7 +108,7 @@ namespace Electro_ECommerce.Controllers
 
         // POST: CategoriesController/Delete/5
         [HttpPost, ActionName("delete")]
-
+        [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
             var category = _context.Categories.Find(id);

@@ -6,7 +6,9 @@ namespace Electro_ECommerce.Controllers
 {
     public class UserController : Controller
     {
-        // GET: UserController
+
+        //TechXpressDbContext db = new TechXpressDbContext();
+        //var categ = db.Categories.ToList();
         private readonly TechXpressDbContext _context;
 
         public UserController(TechXpressDbContext context)
@@ -16,77 +18,89 @@ namespace Electro_ECommerce.Controllers
         // GET: CategoriesController
         public ActionResult Index()
         {
-            var categories = _context.Categories.ToList();
-            return View(categories);
+            var Users = _context.Users.ToList();
+            return View(Users);
         }
 
-        // GET: UserController/Details/5
+        // GET: CategoriesController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
-        }
+            var User = _context.Users.Find(id);
+            if (User== null)
+                return NotFound();
 
-        // GET: UserController/Create
+            return View(User);
+        }
+     
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: UserController/Create
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(User User)
         {
-            try
+            
+            if (ModelState.IsValid)
             {
+                _context.Users.Add(User);
+                _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
+            return View(User);
         }
 
-        // GET: UserController/Edit/5
+        // GET: CategoriesController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            var User = _context.Users.Find(id);
+            if (User == null)
+                return NotFound();
+
+            return View(User);
         }
 
-        // POST: UserController/Edit/5
+        // POST: CategoriesController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, User User)
         {
-            try
+
+            if ((id != User.UserId)) return BadRequest();
+            if (ModelState.IsValid)
             {
+                _context.Users.Update(User);
+                _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
+            return View(User);
         }
 
-        // GET: UserController/Delete/5
+        // GET: CategoriesController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var User = _context.Users.Find(id);
+            if (User == null)
+                return NotFound();
+
+            return View(User);
+
         }
 
-        // POST: UserController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        // POST: CategoriesController/Delete/5
+        [HttpPost, ActionName("delete")]
+
+        public ActionResult DeleteConfirmed(int id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var User = _context.Users.Find(id);
+            if (User == null) return NotFound();
+            _context.Users.Remove(User);
+            _context.SaveChanges();
+            return RedirectToAction(nameof(Index));
+
         }
     }
 }
+
