@@ -7,8 +7,7 @@ namespace Electro_ECommerce.Controllers
     public class CategoriesController : Controller
     {
 
-        //TechXpressDbContext db = new TechXpressDbContext();
-        //var categ = db.Categories.ToList();
+        //TechXpressDbContext db = new TechXpressDbContext(); 
         private readonly TechXpressDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
         public CategoriesController(TechXpressDbContext context, IWebHostEnvironment webHostEnvironment)

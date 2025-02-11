@@ -1,106 +1,86 @@
 ﻿using Electro_ECommerce.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Electro_ECommerce.Controllers
 {
     public class ProductController : Controller
     {
-
-        //TechXpressDbContext db = new TechXpressDbContext();
-        //var categ = db.Categories.ToList();
         private readonly TechXpressDbContext _context;
 
         public ProductController(TechXpressDbContext context)
         {
             _context = context;
         }
-        // GET: CategoriesController
-        public ActionResult Index()
+
+        public IActionResult Index()
         {
-            var Products = _context.Products.ToList();
-            return View(Products);
+            var products = _context.Products.Include(p => p.Category).ToList();
+            return View(products);
         }
-
-        // GET: CategoriesController/Details/5
-        public ActionResult Details(int id)
+        [ValidateAntiForgeryToken]
+        public IActionResult Details(int id)
         {
-            var Products = _context.Products.Find(id);
-            if (Products == null)
-                return NotFound();
-
-            return View(Products);
+            var product = _context.Products.Include(p => p.Category).FirstOrDefault(p => p.ProductId == id);
+            if (product == null) return NotFound();
+            return View(product);
         }
-
-        public ActionResult Create()
+        public IActionResult Create()
         {
+            ViewBag.Categories = _context.Categories.ToList();
             return View();
         }
-
-
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(Product Product)
+        public IActionResult Create(Product product)
         {
-
             if (ModelState.IsValid)
             {
-                _context.Products.Add(Product);
+                _context.Products.Add(product);
                 _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
-            return View(Product);
-        }
+            ViewBag.Categories = _context.Categories.ToList();
+            return View(product);
 
-        // GET: CategoriesController/Edit/5
-        public ActionResult Edit(int id)
+        }
+        public IActionResult Edit(int id)
         {
-            var Product = _context.Products.Find(id);
-            if (Product == null)
-                return NotFound();
-
-            return View(Product);
+            var product = _context.Products.Find(id);
+            if (product == null) return NotFound();
+            ViewBag.Categories = _context.Categories.ToList();
+            return View(product);
         }
-
-        // POST: CategoriesController/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, Product Product)
+        public IActionResult Edit(int id, Product product)
         {
-
-            if ((id != Product.ProductId)) return BadRequest();
+            if (id != product.ProductId) return BadRequest();
             if (ModelState.IsValid)
             {
-                _context.Products.Update(Product);
+                _context.Update(product);
                 _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
-            return View(Product);
+            ViewBag.Categories = _context.Categories.ToList();
+            return View(product);
         }
-
-        // GET: CategoriesController/Delete/5
-        public ActionResult Delete(int id)
+        public IActionResult Delete(int id)
         {
-            var Product = _context.Products.Find(id);
-            if (Product == null)
-                return NotFound();
-
-            return View(Product);
-
+            var product = _context.Products.Include(p => p.Category).FirstOrDefault(p => p.ProductId == id);
+            if (product == null) return NotFound();
+            return View(product);
         }
-
-        // POST: CategoriesController/Delete/5
-        [HttpPost, ActionName("delete")]
-
-        public ActionResult DeleteConfirmed(int id)
+        [HttpPost, ActionName("Delete")]
+        public IActionResult DeleteConfirmed(int id)
         {
-            var Product = _context.Products.Find(id);
-            if (Product == null) return NotFound();
-            _context.Products.Remove(Product);
+            var product = _context.Products.Find(id);
+            if (product == null) return NotFound();
+
+            _context.Products.Remove(product);
             _context.SaveChanges();
             return RedirectToAction(nameof(Index));
-
         }
     }
 }
 
+ 

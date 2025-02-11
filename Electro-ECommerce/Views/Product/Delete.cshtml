@@ -1,0 +1,23 @@
+﻿@model Product
+<h2>Delete Product</h2>
+<p>Are You Sure You Want To Delete This Product ?</p>
+
+<dl class="row">
+    <dt class="col-2">Name</dt>
+    <dt class="col-10">@Model.Name</dt>
+
+    <dt class="col-2">Price</dt>
+    <dt class="col-10">@Model.Price</dt>
+
+    <dt class="col-2">Stock</dt>
+    <dt class="col-10">@Model.StockQuantity</dt>
+
+    <dt class="col-2">Category Name</dt>
+    <dt class="col-10">@Model.Category.Name</dt>
+</dl>
+
+<form asp-action="Delete" asp-controller="Product" method="post">
+    <input type="hidden" asp-for="ProductId" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

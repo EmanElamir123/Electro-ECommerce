@@ -22,7 +22,6 @@ public partial class Product
     public DateTime? UpdatedAt { get; set; }
 
     public virtual Category? Category { get; set; }
-
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
     public virtual ICollection<PromotionProduct> PromotionProducts { get; set; } = new List<PromotionProduct>();
