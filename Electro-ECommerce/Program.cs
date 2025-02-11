@@ -8,7 +8,9 @@ builder.Services.AddControllersWithViews();
 
 // Register DbContext before building the app
 builder.Services.AddDbContext<TechXpressDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
 
 var app = builder.Build();
 
@@ -30,3 +32,4 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+

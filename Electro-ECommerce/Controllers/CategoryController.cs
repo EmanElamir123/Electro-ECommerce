@@ -2,6 +2,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
+
+
+
 namespace Electro_ECommerce.Controllers
 {
     public class CategoriesController : Controller
@@ -10,11 +13,15 @@ namespace Electro_ECommerce.Controllers
         //TechXpressDbContext db = new TechXpressDbContext(); 
         private readonly TechXpressDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
+
         public CategoriesController(TechXpressDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
         }
+
+       
+
         // GET: CategoriesController
         public ActionResult Index()
         {
@@ -116,6 +123,11 @@ namespace Electro_ECommerce.Controllers
             _context.SaveChanges();
             return RedirectToAction(nameof(Index));
 
+        }
+
+        internal RedirectToActionResult Create(Category newCategory)
+        {
+            throw new NotImplementedException();
         }
     }
 }
